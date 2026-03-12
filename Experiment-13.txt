@@ -1,0 +1,130 @@
+Binary Tree Traversls
+Problem Statement:
+
+To understand and implement the three fundamental Depth-First Search (DFS) traversals for a binary tree: Pre-order, In-order, and Post-order
+
+Write a program to understand and implement Tree traversals: Pre-Order, Post-Order, and In-Order.
+
+Tree traversals are methods for visiting every node in a tree. The three main DFS traversals are:
+
+In-order (L-N-R): Visit left subtree, then the node, then the right subtree. Used to retrieve elements from a BST in sorted order.
+Pre-order (N-L-R): Visit the node, then the left subtree, then the right subtree. Used for copying a tree or prefix notation.
+Post-order (L-R-N): Visit the left subtree, then the right subtree, then the node. Used for deleting a tree (deleting children before parent).
+Input Explanation:
+
+A binary tree is created with node values.
+
+Output Explanation:
+
+The output should be the result of the Pre-order, In-order, and Post-order traversals in that order.
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 100].
+-100 <= Node.val <= 100
+Time Limit:
+1 sec
+
+Example 1:
+Input
+5
+1 2 3 4 5
+
+Output
+1 2 4 5 3
+4 2 5 1 3
+4 5 2 3 1
+
+Example 2:
+Input
+3
+1 2 3
+
+Output
+1 2 3
+2 1 3
+2 3 1
+
+Sample I/O Explanation:
+
+
+Explanation:
+
+1
+
+/ \
+
+2 3
+
+/ \
+
+4 5
+
+
+
+Traversals:
+
+Pre-order (N-L-R): 1 2 4 5 3
+In-order (L-N-R): 4 2 5 1 3
+Post-order (L-R-N): 4 5 2 3 1
+
+
+==============================================================================================================================
+
+
+
+import java.util.Scanner;
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int val) {
+        this.val = val;
+        this.left = this.right = null;
+    }
+}
+public class TreeTraversals {
+    public static void preOrder(TreeNode node) {
+        if (node == null) return;
+        System.out.print(node.val + " ");
+        preOrder(node.left);
+        preOrder(node.right);
+    }
+    public static void inOrder(TreeNode node) {
+        if (node == null) return;
+        inOrder(node.left);
+        System.out.print(node.val + " ");
+        inOrder(node.right);
+    }
+    public static void postOrder(TreeNode node) {
+        if (node == null) return;
+        postOrder(node.left);
+        postOrder(node.right);
+        System.out.print(node.val + " ");
+    }
+    public static TreeNode insertLevelOrder(int[] arr, TreeNode root, int i) {
+        if (i < arr.length) {
+            TreeNode node = new TreeNode(arr[i]);
+            root = node;
+            root.left = insertLevelOrder(arr, root.left, 2 * i + 1);
+            root.right = insertLevelOrder(arr, root.right, 2 * i + 2);
+        }
+        return root;
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] nodes = new int[n];
+        for (int i = 0; i < n; i++) {
+            nodes[i] = scanner.nextInt();
+        }
+        TreeNode root = insertLevelOrder(nodes, null, 0);
+        preOrder(root);
+        System.out.println();
+        inOrder(root);
+        System.out.println();
+        postOrder(root);
+        System.out.println();
+        scanner.close();
+    }
+}
+

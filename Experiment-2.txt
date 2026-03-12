@@ -1,0 +1,175 @@
+Postfix CalCulation
+Problem Statement:
+
+Objective(s): To understand and implement an algorithm for evaluating postfix (Reverse
+
+Polish Notation) expressions using a stack.
+
+
+
+Outcome: Students will be able to write a program that correctly evaluates postfix
+
+expressions and understand the role of stacks in expression evaluation and parsing.
+
+
+
+Problem Statement: Write a program to deal with real-world situations where Stack data
+
+structure is widely used Evaluation of expression: Stacks are used to evaluate expressions,
+
+especially in languages that use postfix or prefix notation. Operators and operands are
+
+pushed onto the stack, and operations are performed based on the LIFO principle.
+
+
+
+Background Study: Postfix notation (RPN) is a mathematical notation where every operator
+
+follows all of its operands. For example, the infix expression (3 + 4) * 5 is written as 3 4 + 5 *
+
+in postfix.
+
+Stacks are the ideal data structure for evaluating RPN. The algorithm is:
+
+1. Scan the expression from left to right.
+
+2. If the token is an operand (a number), push it onto the stack.
+
+3. If the token is an operator, pop the top two operands from the stack.
+
+4. Perform the operation (note the order: op1 = stack.pop(), op2 = stack.pop(), result is
+
+op2 op op1) and push the result back onto the stack.
+
+5. After scanning all tokens, the final result will be the only element on the stack.
+
+Input Explanation:
+
+First line: Integer T, number of test cases.
+
+Next T lines: Each line contains one postfix expression, tokens separated by spaces.
+
+Output Explanation:
+
+For each test case, print a single integer representing the evaluated result.
+
+Constraints:
+
+Expression length ≤ 100
+
+Operands are integers (positive or negative).
+
+Supported operators: + - * / ^
+
+Division is integer division (truncate toward zero).
+
+Expression tokens must be space-separated.
+
+At least one valid postfix expression must be given.
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+1
+3 4 + 5 *
+
+Output
+35
+
+Example 2:
+Input
+1
+10 2 /
+
+Output
+5
+
+Sample I/O Explanation:
+
+1
+
+3 4 + 5 *
+
+
+
+Stack Trace:
+
+Read 3 → push → stack = [3]
+
+Read 4 → push → stack = [3,4]
+
+Read + → pop 4 & 3 → compute 3+4 = 7 → push 7
+
+Read 5 → push → stack = [7,5]
+
+Read * → pop 5 & 7 → compute 7*5 = 35 → push 35
+
+End → final result = 35
+
+===================================================================================================================================
+
+import java.util.*;
+import java.lang.Math;
+
+public class Main {
+
+    // Function to evaluate a postfix expression
+    public static int evaluatePostfix(String exp) {
+        Stack<Integer> stack = new Stack<>();
+
+        // Split expression by spaces
+        String[] tokens = exp.split("\\s+");
+
+        for (String token : tokens) {
+
+            // If token is an integer (operand)
+            if (token.matches("-?\\d+")) {
+                stack.push(Integer.parseInt(token));
+            }
+            // Otherwise, token is an operator
+            else {
+                int op1 = stack.pop(); // first popped operand
+                int op2 = stack.pop(); // second popped operand
+                int result = 0;
+
+                switch (token) {
+                    case "+":
+                        result = op2 + op1;
+                        break;
+                    case "-":
+                        result = op2 - op1;
+                        break;
+                    case "*":
+                        result = op2 * op1;
+                        break;
+                    case "/":
+                        result = op2 / op1; // integer division
+                        break;
+                    case "^":
+                        result = (int) Math.pow(op2, op1);
+                        break;
+                }
+                stack.push(result);
+            }
+        }
+
+        // Final result will be the only element in stack
+        return stack.pop();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int T = sc.nextInt();
+        sc.nextLine();  // consume leftover newline
+
+        while (T-- > 0) {
+            String exp = sc.nextLine().trim();
+            System.out.println(evaluatePostfix(exp));
+        }
+    }
+}
+
+

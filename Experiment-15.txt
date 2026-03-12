@@ -1,0 +1,141 @@
+Lowest Common Ancestor (LCA)
+Problem Statement:
+
+Write a program for finding the Lowest Common Ancestor (LCA) in a Binary Search Tree.
+
+The Lowest Common Ancestor (LCA) of two nodes, p and q, in a BST is the lowest node that has both p and q as descendants. The BST's ordering property allows for a very fast search.
+
+Start at the root. For any currentNode:
+
+If p.val and q.val are both smaller than currentNode.val, their LCA must be in the left subtree.
+If p.val and q.val are both larger than currentNode.val, their LCA must be in the right subtree.
+If the values "split" (one is smaller, one is larger), or if one of them is the currentNode, then the currentNode is the split point and must be the LCA.
+This can be implemented iteratively (O(1) space) or recursively.
+
+Input Explanation:
+
+The first line contains an integer n, representing the number of nodes in the BST.
+The second line contains n space-separated integers, each representing a node value to insert into the BST.
+The third line contains an integer pVal, the value of the first node for which we need to find the LCA.
+The fourth line contains an integer qVal, the value of the second node for which we need to find the LCA.
+Output Explanation:
+
+Output the value of the Lowest Common Ancestor of nodes pVal and qVal if both nodes exist in the BST.
+If either of the nodes doesn't exist in the BST, output "One or both of the nodes are not present in the tree."
+Constraints:
+
+The number of nodes in the tree is in the range [2, 10^5].
+-10^9 <= Node.val <= 10^9
+All Node.val are unique.
+p != q
+p and q will exist in the BST.
+Time Limit:
+1 sec
+
+Example 1:
+Input
+7
+20 10 30 5 15 25 35
+5
+15
+
+Output
+10
+
+Example 2:
+Input
+7
+20 10 30 5 15 25 35
+40
+25
+
+Output
+One or both of the nodes are not present in the tree.
+
+Sample I/O Explanation:
+
+Explanation:
+
+The LCA of nodes 5 and 15 is 10, as 10 is the lowest node that has both 5 and 15 as descendants.
+
+==============================================================================================================================
+
+import java.util.Scanner;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    public TreeNode(int val) {
+        this.val = val;
+        left = right = null;
+    }
+}
+
+public class LcaOfBST {
+    public static TreeNode lcaBST(TreeNode root, TreeNode p, TreeNode q) {
+        TreeNode current = root;
+        while (current != null) {
+            if (p.val < current.val && q.val < current.val) {
+                current = current.left;
+            } else if (p.val > current.val && q.val > current.val) {
+                current = current.right;
+            } else {
+                return current;
+            }
+        }
+        return null;
+    }
+
+    public static TreeNode insert(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
+        if (val < root.val) {
+            root.left = insert(root.left, val);
+        } else {
+            root.right = insert(root.right, val);
+        }
+        return root;
+    }
+
+    public static TreeNode findNode(TreeNode root, int val) {
+        while (root != null) {
+            if (val == root.val) {
+                return root;
+            } else if (val < root.val) {
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+        return null;
+    }
+
+    //do not edit this part
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        TreeNode root = null;
+        for (int i = 0; i < n; i++) {
+            int value = scanner.nextInt();
+            root = insert(root, value);
+        }
+
+        int pVal = scanner.nextInt();
+        int qVal = scanner.nextInt();
+        TreeNode p = findNode(root, pVal);
+        TreeNode q = findNode(root, qVal);
+        if (p == null || q == null) {
+            System.out.println("One or both of the nodes are not present in the tree.");
+        } else {
+            TreeNode lca = lcaBST(root, p, q);
+            if (lca != null) {
+                System.out.println(lca.val);
+            } else {
+                System.out.println("LCA not found.");
+            }
+        }
+        scanner.close();
+    }
+}
+

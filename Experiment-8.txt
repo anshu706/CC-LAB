@@ -1,0 +1,195 @@
+Intersection point of two linked lists
+Problem Statement:
+
+Objective:
+To solve the problem of finding the intersection point of two linked lists using an efficient
+
+O(1) space and O(m + n) time approach.
+
+Outcome:
+Students will be able to:
+
+Implement two optimal algorithms to detect the merge point of singly linked lists.
+Strengthen understanding of pointer manipulation and linked list traversal.
+Compare naive, hashing, and optimal solutions.
+Problem Statement:
+Write a program to find the intersection node of two singly linked lists.
+
+If the two linked lists do not intersect, return null.
+
+Two linked lists intersect if they share the exact same node (same memory reference).
+
+From that intersection node onward, the remaining part of both lists is identical.
+
+Input Explanation:
+
+First Linked List: List A
+
+Second Linked List: List B
+
+Output Explanation:
+
+If intersection exists → return data of intersection node
+
+Else → return null
+
+Constraints:
+
+1 ≤ length of list A, B ≤ 10⁵
+
+Nodes contain integer data
+
+Lists may or may not intersect
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+3
+1 2 3
+2
+9 3
+2
+
+Output
+3
+
+Example 2:
+Input
+3
+1 4 7
+3
+2 6 9
+-1
+
+Output
+null
+
+Sample I/O Explanation:
+
+Intersection at node containing 3
+
+====================================================================================================================================================
+
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int val) {
+        this.val = val;
+    }
+}
+
+
+public class IntersectionFinder {
+
+
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+      // Write Your Code Here
+      ListNode c1 = headA;
+      ListNode c2 = headB;
+
+      while(c1 != c2)
+      {
+          if(c1.next == null && c2.next == null)
+          {
+              return null;
+          }
+
+          if(c1.next == null)
+          {
+              c1 = headB;
+          }
+          else if(c2.next == null)
+          {
+              c2 = headA;
+          }
+          else
+          {
+              c1 = c1.next;
+              c2 = c2.next;
+          }
+      }
+      return c1;
+    }
+
+    public static ListNode buildList(int[] arr) {
+        if (arr.length == 0) return null;
+
+        ListNode head = new ListNode(arr[0]);
+        ListNode curr = head;
+
+        for (int i = 1; i < arr.length; i++) {
+            curr.next = new ListNode(arr[i]);
+            curr = curr.next;
+        }
+
+        return head;
+    }
+
+
+    public static ListNode getNodeAt(ListNode head, int index) {
+        int i = 0;
+        while (head != null) {
+            if (i == index) return head;
+            head = head.next;
+            i++;
+        }
+        return null;
+    }
+
+
+    // -----------------------------------------
+    // MAIN / Driver Code with USER INPUT
+    // -----------------------------------------
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // Input List A
+
+        int nA = sc.nextInt();
+        int[] arrA = new int[nA];
+
+
+        for (int i = 0; i < nA; i++) arrA[i] = sc.nextInt();
+
+        ListNode headA = buildList(arrA);
+
+        // Input List B
+
+        int nB = sc.nextInt();
+        int[] arrB = new int[nB];
+
+
+        for (int i = 0; i < nB; i++) arrB[i] = sc.nextInt();
+
+        ListNode headB = buildList(arrB);
+
+        // Intersection input
+
+        int idx = sc.nextInt();
+
+        if (idx != -1) {
+            ListNode connectNode = getNodeAt(headA, idx);
+
+            // Attach last node of List B to this node
+            ListNode temp = headB;
+            while (temp.next != null) temp = temp.next;
+            temp.next = connectNode;
+        }
+
+        // Solve
+        ListNode intersection = getIntersectionNode(headA, headB);
+
+        System.out.println();
+        if (intersection != null)
+            System.out.println(intersection.val);
+        else
+            System.out.println("null");
+
+        sc.close();
+    }
+}

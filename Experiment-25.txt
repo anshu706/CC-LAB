@@ -1,0 +1,174 @@
+To implement the Level Order Traversal (Breadth-First Search or BFS) of a binary tree.
+Problem Statement:
+
+Given the root of a binary tree, return the level order traversal of its nodes' values.
+
+That is, return the values level by level, from left to right.
+
+
+
+
+
+Input Explanation:
+
+First line: An integer n, the number of nodes in the binary tree.
+Second line: A list of n space-separated integers representing the level-order traversal of the binary tree. Use -1 to represent null (i.e., a missing child node).
+
+
+Output Explanation:
+
+Return a 2D list of integers where each sublist contains the values of the nodes at that level of the tree, ordered from left to right.
+Each level should appear in order from top to bottom.
+
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 2000].
+-1000 ≤ Node.val ≤ 1000
+
+
+Time Limit:
+2 sec
+
+Example 1:
+Input
+7
+3 9 20 -1 -1 15 7
+
+Output
+[[3],[9, 20],[15, 7]]
+
+Example 2:
+Input
+1
+1
+
+Output
+[[1]]
+
+Example 3:
+Input
+0
+
+Output
+[]
+
+Sample I/O Explanation:
+
+The tree looks like this:
+
+
+
+3
+
+
+
+/ \
+
+
+
+9 20
+
+
+
+/ \
+
+
+
+15 7
+
+
+
+Level 0: [3]
+
+
+
+Level 1: [9, 20]
+
+
+
+Level 2: [15, 7]
+
+
+============================================================================================================================================================================================================================================================
+
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+public class Main {
+    public static TreeNode buildTree(int[] arr, int n) {
+        if (n == 0 || arr[0] == -1) return null;
+        TreeNode root = new TreeNode(arr[0]);
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int i = 1;
+        while (!q.isEmpty() && i < n) {
+            TreeNode current = q.poll();
+            if (i < n && arr[i] != -1) {
+                current.left = new TreeNode(arr[i]);
+                q.add(current.left);
+            }
+            i++;
+            if (i < n && arr[i] != -1) {
+                current.right = new TreeNode(arr[i]);
+                q.add(current.right);
+            }
+            i++;
+        }
+        return root;
+    }
+
+    public static List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            List<Integer> currentLevel = new ArrayList<>();
+
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode node = queue.poll();
+                currentLevel.add(node.val);
+
+                if (node.left != null)  queue.add(node.left);
+                if (node.right != null) queue.add(node.right);
+            }
+            result.add(currentLevel);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        if (n == 0) {
+            System.out.println("[]");
+            return;
+        }
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+        }
+        TreeNode root = buildTree(arr, n);
+        List<List<Integer>> result = levelOrder(root);
+        System.out.print("[");
+        for (int i = 0; i < result.size(); i++) {
+            System.out.print(result.get(i));
+            if (i != result.size() - 1)
+                System.out.print(",");
+        }
+        System.out.println("]");
+    }
+}

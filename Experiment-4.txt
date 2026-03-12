@@ -1,0 +1,248 @@
+Design a circular queue
+Problem Statement:
+
+Objective(s): To understand the concept and implementation of a circular queue (circular
+
+buffer), a fixed-size queue that efficiently uses its storage.
+
+
+
+Outcome: Students will be able to design and implement a fixed-size circular queue
+
+supporting enQueue, deQueue, Front, and Rear operations, and correctly handle empty and full (overflow/underflow) conditions.
+
+
+
+Problem Statement: Write a program to design a circular queue of size k which should
+
+implement the below functions: a. enQueue(value): Adds an item to the queue. Returns true
+
+on success. b. deQueue(): Removes an item from the queue. Returns true on success. c.
+
+Front(): Get the front item from the queue. d. Rear(): Get the last item from the queue. e.
+
+isEmpty() / isFull()
+
+
+
+Background Study: A standard queue implemented with an array can waste space. When
+
+elements are dequeued, the space at the front is left empty. A circular queue solves this by
+
+treating the array as circular. The position after the last element is the first element.
+
+We use two pointers, head (or front) and tail (or rear).
+
+● head points to the index of the first element.
+
+● tail points to the index of the last element.
+
+● enQueue: Insert at (tail + 1) % size.
+
+● deQueue: Remove from head, then move head to (head + 1) % size.
+
+Managing empty/full states can be tricky. A common method is to store the size (capacity)
+
+and a count of current elements.
+
+● Empty: count == 0
+
+● Full: count == size This avoids the ambiguity of head == tail.
+
+Input Explanation:
+
+k → size of circular queue
+Q → number of operations
+operation1
+operation2
+...
+operationQ
+
+
+Format Meaning
+1 x	enQueue(x)
+2	deQueue()
+3	Front()
+4	Rear()
+5	isEmpty()
+6	isFull()
+
+
+Output Explanation:
+
+
+
+Front() → print element or -1
+Rear() → print element or -1
+isEmpty() → print true or false
+isFull() → print true or false
+enQueue()/deQueue() → print true or false depending on success
+
+
+Constraints:
+
+1 ≤ k ≤ 1000
+1 ≤ Q ≤ 1000
+-10^9 ≤ value ≤ 10^9
+All operations must run in O(1)
+Time Limit:
+1 sec
+
+Example 1:
+Input
+3
+7
+1 10
+1 20
+1 30
+4
+2
+1 40
+4
+
+Output
+true
+true
+true
+30
+true
+true
+40
+
+Example 2:
+Input
+2
+4
+1 5
+1 6
+1 7
+4
+
+Output
+true
+true
+false
+6
+
+Sample I/O Explanation:
+
+Operation Queue Front Rear Output
+enQueue(10)	[10]	10	10	true
+enQueue(20)	[10,20]	10	20	true
+enQueue(30)	[10,20,30]	10	30	true
+Rear()	—	—	30	30
+deQueue()	[20,30]	20	30	true
+enQueue(40)	[20,30,40]	20	40	true
+Rear()	—	—	40	40
+
+
+======================================================================================================================================
+
+import java.util.*;
+
+public class CircularQueueProgram {
+
+    static class MyCircularQueue {
+        private int[] queue;
+        private int head;
+        private int tail;
+        private int size;
+        private int count;
+
+        // Constructor
+        public MyCircularQueue(int k) {
+            queue = new int[k];
+            size = k;
+            head = 0;
+            tail = -1;
+            count = 0;
+        }
+
+        // Insert element into circular queue
+        public boolean enQueue(int value) {
+            if (isFull()) {
+                return false;
+            }
+            tail = (tail + 1) % size;
+            queue[tail] = value;
+            count++;
+            return true;
+        }
+
+        // Delete element from circular queue
+        public boolean deQueue() {
+            if (isEmpty()) {
+                return false;
+            }
+            head = (head + 1) % size;
+            count--;
+            return true;
+        }
+
+        // Get front element
+        public int Front() {
+            if (isEmpty()) {
+                return -1;
+            }
+            return queue[head];
+        }
+
+        // Get rear element
+        public int Rear() {
+            if (isEmpty()) {
+                return -1;
+            }
+            return queue[tail];
+        }
+
+        // Check if queue is empty
+        public boolean isEmpty() {
+            return count == 0;
+        }
+
+        // Check if queue is full
+        public boolean isFull() {
+            return count == size;
+        }
+    }
+
+    // Main program
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int k = sc.nextInt();  // size of queue
+        int Q = sc.nextInt();  // number of operations
+
+        MyCircularQueue cq = new MyCircularQueue(k);
+
+        while (Q-- > 0) {
+            int op = sc.nextInt();
+
+            switch (op) {
+                case 1:
+                    int value = sc.nextInt();
+                    System.out.println(cq.enQueue(value));
+                    break;
+                case 2:
+                    System.out.println(cq.deQueue());
+                    break;
+                case 3:
+                    System.out.println(cq.Front());
+                    break;
+                case 4:
+                    System.out.println(cq.Rear());
+                    break;
+                case 5:
+                    System.out.println(cq.isEmpty());
+                    break;
+                case 6:
+                    System.out.println(cq.isFull());
+                    break;
+                default:
+                    System.out.println("Invalid Operation");
+            }
+        }
+        sc.close();
+    }
+}
+

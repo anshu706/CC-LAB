@@ -1,0 +1,125 @@
+Product of the three largest distinct elements
+Problem Statement:
+
+Objective(s): To learn how to use a PriorityQueue (heap) in Java to efficiently solve top-k problems, specifically finding the three largest distinct elements.
+
+
+
+Outcome: Students will be able to:
+
+Use PriorityQueue effectively to extract largest elements.
+Understand why a heap-based O(n log k) approach is faster than sorting O(n log n).
+Manage duplicates using a HashSet.
+Correctly compute the product of the top 3 distinct numbers.
+
+
+
+
+Problem Statement: Write a program to find the product of the three largest distinct elements from a list of integers.
+
+Use a PriorityQueue (Heap) to efficiently find and remove the largest elements.
+
+If fewer than 3 distinct numbers exist, return -1.
+
+
+
+Background Study: Java’s PriorityQueue is a min-heap (smallest at top).
+
+To create a max-heap, use:
+
+
+
+new PriorityQueue<>(Collections.reverseOrder());
+
+
+
+Steps for This Problem
+Insert all numbers into a HashSet → ensures distinct elements.
+Create a max-heap from the distinct elements.
+Remove (poll()) the top three elements.
+Compute the product.
+
+
+An alternative O(n log k) approach for k=3 (used when n is very large):
+
+Create a min-heap of size k = 3.
+Insert elements one by one.
+If heap size > 3 → remove the smallest.
+Remaining elements = top 3 largest.
+Input Explanation:
+
+n
+
+a1 a2 a3 ... an
+
+Output Explanation:
+
+Product of the three largest distinct elements
+
+If fewer than 3 exist → print -1
+
+Constraints:
+
+1 ≤ n ≤ 10^5
+−10^9 ≤ ai ≤ 10^9
+Must use PriorityQueue or heap-based logic
+Time Limit:
+1 sec
+
+Example 1:
+Input
+6
+1 5 2 9 9 7
+
+Output
+315
+
+Example 2:
+Input
+3
+4 4 4
+
+Output
+-1
+
+Sample I/O Explanation:
+
+Distinct Elements:
+
+{1, 2, 5, 7, 9}
+
+Max-heap → top three:
+
+9, 7, 5
+
+Product:
+
+9 × 7 × 5 = 315
+
+=====================================================================================================================================================
+
+import java.util.*;
+public class ProductOfThreeLargestDistinct {
+    public static long findProduct(int[] arr) {
+        HashSet<Integer> set = new HashSet<>();
+        for (int num : arr) set.add(num);
+
+        if (set.size() < 3) return -1;
+
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        maxHeap.addAll(set);
+
+        long product = 1;
+        for (int i = 0; i < 3; i++) product *= maxHeap.poll();
+
+        return product;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();
+        System.out.println(findProduct(arr));
+    }
+}
+

@@ -1,0 +1,168 @@
+Hash table using "separate chaining"
+Problem Statement:
+
+Implement a hash table using separate chaining for collision handling. Perform operations like insertion, deletion, and search on the hash table.
+
+
+
+Separate chaining is a collision resolution technique where the hash table's array does not store the values directly. Instead, each array index (or "bucket") holds a pointer to a data structure, typically a LinkedList, which stores all the key-value pairs that hash to that same index.
+
+Insertion: Hash the key to find the bucket. Traverse the LinkedList in that bucket. If the key exists, update its value. If not, add a new (key, value) pair to the list.
+Search: Hash the key. Traverse the list in the corresponding bucket. If the key is found, return its value.
+Deletion: Hash the key. Traverse the list to find the key. Remove the (key, value) pair from the list.
+Input Explanation:
+
+The first input is an integer numEntries (1 ≤ numEntries ≤ 100) — the number of key-value pairs to be inserted into the hash table.
+
+
+
+Then, for each key-value pair:
+
+A string key (1 ≤ length of key ≤ 100) — the key.
+A string value (1 ≤ length of value ≤ 100) — the value associated with the key.
+
+
+Finally, a string searchKey — the key for which you want to search in the hash table.
+
+Output Explanation:
+
+The program inserts the key-value pairs into the hash table.
+
+It outputs the result of the search for the searchKey:
+
+If the key is found, it outputs the corresponding value.
+If the key is not found, it outputs "Not Found".
+Constraints:
+
+1 ≤ numEntries ≤ 100
+1 ≤ length of key ≤ 100
+1 ≤ length of value ≤ 100
+The key and value strings consist of printable ASCII characters.
+The hash table uses a basic chaining method to handle collisions.
+Time Limit:
+1 sec
+
+Example 1:
+Input
+3
+name
+Alice
+course
+CC
+age
+25
+name
+
+Output
+Search result for key 'name': Alice
+
+Example 2:
+Input
+0
+hello
+
+Output
+Search result for key 'hello': Not Found
+
+Sample I/O Explanation:
+
+Explanation :
+
+Test Case 1:
+
+Insert "name" with value "Alice" into the hash table.
+Insert "course" with value "CC" into the hash table.
+Insert "age" with value "25" into the hash table.
+Search for "name". The key "name" is found, and the value "Alice" is returned.
+
+
+Test Case 2:
+
+Insert key-value pairs:
+"name" -> "Alice"
+"course" -> "CC"
+"age" -> "25"
+Search for "gender". The key "gender" is not found in the hash table, so the output is "Not Found".
+
+
+==============================================================================================================================
+
+
+import java.util.*;
+
+class HashEntry {
+    String key;
+    String value;
+    public HashEntry(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+}
+
+class HashTable {
+    private static final int TABLE_SIZE = 10;
+    private ArrayList<LinkedList<HashEntry>> buckets;
+
+    public HashTable() {
+        buckets = new ArrayList<>(TABLE_SIZE);
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            buckets.add(new LinkedList<HashEntry>());
+        }
+    }
+
+    private int hashFunction(String key) {
+        int hashCode = key.hashCode();
+        return Math.abs(hashCode) % TABLE_SIZE;
+    }
+
+    public void insert(String key, String value) {
+        int index = hashFunction(key);
+        LinkedList<HashEntry> bucket = buckets.get(index);
+        for (HashEntry entry : bucket) {
+            if (entry.key.equals(key)) {
+                entry.value = value;
+                return;
+            }
+        }
+        bucket.add(new HashEntry(key, value));
+    }
+
+    public String search(String key) {
+        int index = hashFunction(key);
+        LinkedList<HashEntry> bucket = buckets.get(index);
+        for (HashEntry entry : bucket) {
+            if (entry.key.equals(key)) {
+                return entry.value;
+            }
+        }
+        return "Not Found";
+    }
+
+    public void remove(String key) {
+        int index = hashFunction(key);
+        LinkedList<HashEntry> bucket = buckets.get(index);
+        bucket.removeIf(entry -> entry.key.equals(key));
+    }
+}
+
+public class ChainingHashTableDemo {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        HashTable ht = new HashTable();
+
+        int numEntries = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numEntries; i++) {
+            String key = scanner.nextLine();
+            String value = scanner.nextLine();
+            ht.insert(key, value);
+        }
+
+        String searchKey = scanner.nextLine();
+        String searchResult = ht.search(searchKey);
+        System.out.println("Search result for key '" + searchKey + "': " + searchResult);
+
+        scanner.close();
+    }
+}

@@ -1,0 +1,113 @@
+
+Count words in a Trie
+Problem Statement:
+
+You are given an array of strings s which is converted into a Trie root. You need to use the given trie root to count and return the number of words stored in the trie.
+
+Input Explanation:
+
+The first line contains an integer n, representing the number of strings in the array.
+The second line contains n space-separated strings, each consisting of lowercase English alphabets.
+Output Explanation:
+
+Print a single integer representing the total number of words stored in the Trie.
+
+Constraints:
+
+1 <= s.size() <= 103
+1 <= s[i] <= 103
+s[i] contains only small case English alphabets
+Time Limit:
+2 sec
+
+Example 1:
+Input
+8
+the a there answer any by bye their
+
+Output
+8
+
+Example 2:
+Input
+1
+a
+
+Output
+1
+
+Sample I/O Explanation:
+
+Input: s[ ] = ["the", "a", "there", "answer", "any", "by", "bye", "their"]
+
+Output: 8
+
+Explanation: The given array of string is converted into a trie. Now, the number of words in the trie are 8, which is the total number of words given in the array s.
+
+
+
+==============================================================================================================================
+
+import java.util.*;
+
+// Trie Node class
+class TrieNode {
+    TrieNode[] children;
+    boolean isEndOfWord;
+    public TrieNode() {
+        children = new TrieNode[26];
+        isEndOfWord = false;
+    }
+}
+
+// Trie class
+class Trie {
+    private TrieNode root;
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Insert a word into Trie
+    public void insert(String word) {
+        TrieNode current = root;
+        for (char ch : word.toCharArray()) {
+            int index = ch - 'a';
+            if (current.children[index] == null) {
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
+        }
+        current.isEndOfWord = true;
+    }
+
+    // Public method to count words
+    public int countWords() {
+        return countWords(root);
+    }
+
+    // Recursive DFS helper
+    private int countWords(TrieNode node) {
+        if (node == null) return 0;
+        int count = node.isEndOfWord ? 1 : 0;
+        for (TrieNode child : node.children) {
+            count += countWords(child);
+        }
+        return count;
+    }
+}
+
+// Driver class
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        Trie trie = new Trie();
+        for (int i = 0; i < n; i++) {
+            String word = sc.next();
+            trie.insert(word);
+        }
+        System.out.println(trie.countWords());
+        sc.close();
+    }
+}
+

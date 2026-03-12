@@ -1,0 +1,164 @@
+Core concept of a hash function
+Problem Statement:
+
+Write a program for a basic hash function. Demonstrate its usage to store and retrieve key-value pairs.
+
+A hash function is a function that takes an input (or 'key') and returns an integer. This integer is used as an index (a "hash code") into an array, which is the "hash table." A good hash function distributes keys uniformly across the array to minimize collisions.
+
+A very simple hash function for a string is to sum the ASCII values of its characters and then use the modulo operator (%) with the table size to ensure the index is within the array bounds. hash = (sum_of_chars) % table_size
+
+This is not a great hash function (e.g., "abc" and "cba" hash to the same index), but it demonstrates the concept. We will store pairs in an array to show the mapping.
+
+Input Explanation:
+
+First Input: An integer numEntries (1 ≤ numEntries ≤ 1000) — the number of key-value pairs to insert.
+Subsequent Inputs: For each pair:
+A string key (1 ≤ length of key ≤ 100)
+A string value (1 ≤ length of value ≤ 100)
+Final Input: A string key to search for its associated value.
+Output Explanation:
+
+For search: Value for 'key': value or Not Found (or collision occurred) if key is not found.
+Constraints:
+
+numEntries ≤ 1000.
+Key and value length ≤ 100 characters.
+Time Limit:
+1 sec
+
+Example 1:
+Input
+3
+apple
+100
+banana
+200
+orange
+300
+banana
+
+Output
+banana : 200
+
+Example 2:
+Input
+4
+dog
+10
+cat
+20
+fish
+30
+bird
+40
+cat
+
+Output
+cat : 20
+
+Sample I/O Explanation:
+
+Explanation:
+
+Test Case 1:
+
+We insert 3 key-value pairs: "apple" -> 100, "banana" -> 200, "orange" -> 300.
+
+We search for the key "banana", and it exists with the value 200, so the output is banana : 200.
+
+
+
+Test Case 2:
+
+We insert 4 key-value pairs: "dog" -> 10, "cat" -> 20, "fish" -> 30, "bird" -> 40.
+
+We search for the key "cat", and it exists with the value 20, so the output is cat : 20.
+
+
+==============================================================================================================================
+
+
+import java.util.Scanner;
+
+class HashEntry {
+    String key;
+    String value;
+    HashEntry next;
+    HashEntry(String key, String value) {
+        this.key = key;
+        this.value = value;
+        this.next = null;
+    }
+}
+
+class SimpleHashTable {
+    private static final int TABLE_SIZE = 10;
+    private HashEntry[] table;
+
+    public SimpleHashTable() {
+        table = new HashEntry[TABLE_SIZE];
+    }
+
+    private int hashFunction(String key) {
+        int sum = 0;
+        for (int i = 0; i < key.length(); i++) {
+            sum += (int) key.charAt(i);
+        }
+        return sum % TABLE_SIZE;
+    }
+
+    public void put(String key, String value) {
+        int index = hashFunction(key);
+        HashEntry newEntry = new HashEntry(key, value);
+
+        if (table[index] == null) {
+            table[index] = newEntry;
+        } else {
+            // Traverse the chain to check if key already exists
+            HashEntry current = table[index];
+            while (current != null) {
+                if (current.key.equals(key)) {
+                    current.value = value; // Update existing key
+                    return;
+                }
+                if (current.next == null) break;
+                current = current.next;
+            }
+            current.next = newEntry; // Append at end of chain
+        }
+    }
+
+    public String get(String key) {
+        int index = hashFunction(key);
+        HashEntry current = table[index];
+
+        while (current != null) {
+            if (current.key.equals(key)) {
+                return current.value;
+            }
+            current = current.next;
+        }
+        return "Not Found (or collision occurred)";
+    }
+}
+
+public class HashFunctionDemo {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SimpleHashTable ht = new SimpleHashTable();
+
+        int numEntries = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < numEntries; i++) {
+            String key = scanner.nextLine();
+            String value = scanner.nextLine();
+            ht.put(key, value);
+        }
+
+        String keyToGet = scanner.nextLine();
+        System.out.println(keyToGet + " : " + ht.get(keyToGet));
+        scanner.close();
+    }
+}
+

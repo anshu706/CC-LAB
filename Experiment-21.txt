@@ -1,0 +1,119 @@
+Huffman Coding for Lossless Data Compression
+Problem Statement:
+
+Implement Huffman Coding using a greedy approach and generate prefix codes for all characters in the given input string.
+
+
+
+You are building a lossless data compression system for a text-processing application.
+
+To reduce storage size while ensuring accurate decoding, you decide to use Huffman Coding, a greedy algorithm that assigns variable-length prefix codes to characters based on their frequency.
+
+You are required to:
+
+Compute the frequency of each character in the given string
+Build a Huffman Tree using a min-priority queue
+Generate and print the Huffman code for each character
+More frequent characters must have shorter codes, and no code should be the prefix of another.
+
+Input Explanation:
+
+A single string text consisting of characters
+
+Output Explanation:
+
+Print the Huffman code for each character
+
+Output format:
+
+                     character : code
+
+
+
+Constraints:
+
+1 ≤ length of string ≤ 10⁵
+
+Characters may include lowercase letters and spaces
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+aaaaaa
+
+Output
+a : 0
+
+Example 2:
+Input
+ab
+
+Output
+a : 0
+b : 1
+
+Sample I/O Explanation:
+
+Characters with higher frequency get shorter codes.
+
+Prefix codes ensure unambiguous decoding.
+
+
+==============================================================================================================================
+
+import java.util.*;
+class HuffmanNode implements Comparable<HuffmanNode> {
+    char ch;
+    int freq;
+    HuffmanNode left, right;
+    HuffmanNode(char c, int f) {
+        ch = c;
+        freq = f;
+        left = right = null;
+    }
+    @Override
+    public int compareTo(HuffmanNode other) {
+        return this.freq - other.freq;
+    }
+}
+public class Main {
+    static void generateCodes(HuffmanNode root, String code,
+                              Map<Character, String> codes) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
+            codes.put(root.ch, code.length() > 0 ? code : "0");
+            return;
+        }
+        generateCodes(root.left, code + "0", codes);
+        generateCodes(root.right, code + "1", codes);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String text = sc.nextLine();
+        Map<Character, Integer> freq = new HashMap<>();
+        for (char c : text.toCharArray())
+            freq.put(c, freq.getOrDefault(c, 0) + 1);
+        PriorityQueue<HuffmanNode> pq = new PriorityQueue<>();
+        for (var e : freq.entrySet())
+            pq.add(new HuffmanNode(e.getKey(), e.getValue()));
+        while (pq.size() > 1) {
+            HuffmanNode left = pq.poll();
+            HuffmanNode right = pq.poll();
+            HuffmanNode parent =
+                new HuffmanNode('\0', left.freq + right.freq);
+            parent.left = left;
+            parent.right = right;
+            pq.add(parent);
+        }
+        HuffmanNode root = pq.poll();
+        Map<Character, String> codes = new HashMap<>();
+        generateCodes(root, "", codes);
+        for (var e : codes.entrySet()) {
+            System.out.println(e.getKey() + " : " + e.getValue());
+        }
+        sc.close();
+    }
+}
+

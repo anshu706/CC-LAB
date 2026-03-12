@@ -1,0 +1,126 @@
+Swap Nodes in Pairs
+Problem Statement:
+
+Objective(s)
+To practice in-place modification of a linked list by swapping every two adjacent nodes without altering node values.
+
+Outcome
+After completing this experiment, students will be able to:
+
+Understand and manipulate node references in a linked list.
+Implement pointer updates safely and correctly.
+Handle edge cases such as:
+odd number of nodes
+empty list
+single node list
+Use a dummy head node to simplify complex rewiring logic.
+Problem Statement
+Given a linked list, swap every two adjacent nodes and return its head.
+
+You may not modify the values, only the references (next pointers) can be changed.
+
+Input Explanation:
+
+n
+
+v1 v2 v3 ... vn
+
+Output Explanation:
+
+"ist after swapping adjacent pairs"
+
+Constraints:
+
+0 ≤ n ≤ 10⁵
+
+Node values may be any integers
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+4
+1 2 3 4
+
+Output
+2 1 4 3
+
+Example 2:
+Input
+3
+1 2 3
+
+Output
+2 1 3
+
+Sample I/O Explanation:
+
+
+==================================================================================================================================================
+
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int val) {
+        this.val = val;
+    }
+}
+
+public class SwapPairs {
+
+    public static ListNode swapPairs(ListNode head) {
+        //Write Your Code Here
+        ListNode dummy = new ListNode(-1);
+        ListNode temp = dummy;
+        dummy.next = head;
+
+        ListNode c1;
+        ListNode c2;
+
+        while(temp.next != null && temp.next.next != null)
+        {
+            c1 = temp.next;
+            c2 = temp.next.next;
+
+            c1.next = c2.next;
+            c2.next = c1;
+
+            temp.next = c2;
+            temp = c1;
+        }
+        return dummy.next;
+    }
+
+    public static void printList(ListNode head) {
+        while (head != null) {
+            System.out.print(head.val + " ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt(); 
+        if (n == 0) {
+            System.out.println("null");
+            return;
+        }
+
+        ListNode head = new ListNode(sc.nextInt());
+        ListNode curr = head;
+
+        for (int i = 1; i < n; i++) {
+            curr.next = new ListNode(sc.nextInt());
+            curr = curr.next;
+        }
+
+        ListNode result = swapPairs(head);
+
+        printList(result);
+    }
+}

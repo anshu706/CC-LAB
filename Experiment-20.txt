@@ -1,0 +1,160 @@
+Trie Operations: Insert, Search, and Remove
+Problem Statement:
+
+You are building a dictionary management system for a text-processing application.
+
+To support fast word lookup, insertion, deletion, and prefix-based operations, you decide to use a Trie (Prefix Tree) data structure.
+
+
+
+You are required to implement a Trie that supports the following operations:
+
+
+
+insert(word) – Insert a lowercase word into the Trie
+
+search(word) – Check whether a complete word exists in the Trie
+
+remove(word) – Remove a word from the Trie without affecting other words sharing prefixes
+
+The Trie should store only lowercase English letters (a–z).
+
+Input Explanation:
+
+An integer n representing the number of operations
+
+The next n lines contain operations in the format:
+
+
+
+insert word
+
+search word
+
+remove word
+
+Output Explanation:
+
+For every search operation, print:
+
+true if the word exists in the Trie
+
+false otherwise
+
+Constraints:
+
+1 ≤ n ≤ 10⁵
+
+1 ≤ length of word ≤ 100
+
+Words contain only lowercase English letters
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+6
+insert hello
+insert hell
+search hello
+remove hello
+search hello
+search hell
+
+Output
+true
+false
+true
+
+Sample I/O Explanation:
+
+Words "hello", "hell", and "help" are inserted
+
+"hello" exists → output true
+
+"hello" is removed
+
+Searching "hello" again returns false, but "hell" remains intact
+
+
+==============================================================================================================================
+
+import java.util.*;
+class TrieNode {
+    TrieNode[] children = new TrieNode[26];
+    boolean isEnd = false;
+}
+public class Main {
+    static class Trie {
+        private TrieNode root;
+        public Trie() {
+            root = new TrieNode();
+        }
+        public void insert(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                int idx = c - 'a';
+                if (node.children[idx] == null) {
+                    node.children[idx] = new TrieNode();
+                }
+                node = node.children[idx];
+            }
+            node.isEnd = true;
+        }
+        public boolean search(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                int idx = c - 'a';
+                if (node.children[idx] == null) return false;
+                node = node.children[idx];
+            }
+            return node.isEnd;
+        }
+        public void remove(String word) {
+            removeHelper(root, word, 0);
+        }
+        private boolean removeHelper(TrieNode node, String word, int depth) {
+            if (node == null) return false;
+            if (depth == word.length()) {
+                if (!node.isEnd) return false;
+                node.isEnd = false;
+                return isEmptyNode(node);
+            }
+            int idx = word.charAt(depth) - 'a';
+            boolean shouldDelete = removeHelper(node.children[idx], word, depth + 1);
+            if (shouldDelete) {
+                node.children[idx] = null;
+                return !node.isEnd && isEmptyNode(node);
+            }
+            return false;
+        }
+        private boolean isEmptyNode(TrieNode node) {
+            for (TrieNode child : node.children) {
+                if (child != null) return false;
+            }
+            return true;
+        }
+    }
+    // Do not edit this part of the code
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Trie trie = new Trie();
+        int n = sc.nextInt();
+        while (n-- > 0) {
+            String op = sc.next();
+            String word = sc.next();
+            if (op.equals("insert")) {
+                trie.insert(word);
+            } 
+            else if (op.equals("search")) {
+                System.out.println(trie.search(word));
+            } 
+            else if (op.equals("remove")) {
+                trie.remove(word);
+            }
+        }
+        sc.close();
+    }
+}
+

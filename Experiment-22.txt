@@ -1,0 +1,77 @@
+Count of distinct substrings
+Problem Statement:
+
+Given a string s consisting of lowercase English characters, determine the total number of distinct non-empty substrings present in the string. A substring is defined as a contiguous block of characters within the string.
+
+
+
+Two substrings are considered distinct if their contents differ, even if they originate from different positions in the string.
+
+
+
+Note: The empty substring is not counted.
+
+
+
+
+
+Input Explanation:
+
+A single line containing a string s.
+
+Output Explanation:
+
+Print a single integer representing the number of distinct non-empty substrings of the given string.
+
+Constraints:
+
+1 ≤ s.size() ≤ 3000
+
+Time Limit:
+2 sec
+
+Example 1:
+Input
+ababa
+
+Output
+9
+
+Example 2:
+Input
+aaa
+
+Output
+3
+
+Sample I/O Explanation:
+
+Input: s = "ababa"
+
+Output: 9
+
+Explanation: All distinct substrings of "ababa" are: "a", "b", "ab", "ba", "aba", "bab", "abab", "baba", "ababa".
+
+==============================================================================================================================
+
+import java.util.*;
+public class Main {
+    public static int countDistinctSubstrings(String s) {
+        Set<String> set = new HashSet<>();
+        int n = s.length();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j <= n; j++) {
+                set.add(s.substring(i, j));
+            }
+        }
+        return set.size();
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        int result = countDistinctSubstrings(s);
+        System.out.println(result);
+        sc.close();
+    }
+}
+

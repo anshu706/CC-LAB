@@ -1,0 +1,166 @@
+Boundary Traversal of BT
+Problem Statement:
+
+To implement the boundary traversal of a binary tree, a non-standard traversal that combines "left view," "leaves," and "right view" in an anti-clockwise direction.
+
+Write a program to perform Boundary Traversal on a Binary Tree. (The syllabus says BST, but this is a standard problem for any Binary Tree and does not use BST properties).
+
+The boundary traversal prints the anti-clockwise "outline" of the tree. It consists of three parts:
+
+The Left Boundary: All nodes on the left edge, from the root down to the last non-leaf node.
+The Leaf Nodes: All leaf nodes, printed from left to right.
+The Right Boundary: All nodes on the right edge, from the last non-leaf node up to the root (printed in reverse).
+Note: Care must be taken to not print a node (especially the root) or a leaf node multiple times.
+
+Input Explanation:
+
+The first input line consists of an integer N, the number of nodes in the binary tree.
+
+The next N lines contain the nodes of the binary tree in a level-order format. If a node is absent, it is represented by -1.
+
+Output Explanation:
+
+Output the boundary traversal of the binary tree in the following order:
+
+Left Boundary (top to bottom)
+Leaf Nodes (from left to right)
+Right Boundary (bottom to top)
+Constraints:
+
+1 ≤ number of nodes ≤ 105
+
+1 ≤ node value ≤ 105
+
+Time Limit:
+1 sec
+
+Example 1:
+Input
+8
+20 8 4 12 10 14 22 25
+
+Output
+20 8 4 10 14 25 22
+
+Example 2:
+Input
+1
+1
+
+Output
+1
+
+Sample I/O Explanation:
+
+Explanation:
+Left Boundary: Start from the root, move down the left edge to the last non-leaf node:
+20 → 8 → 4.
+Leaf Nodes: Traverse all leaf nodes from left to right:
+10 → 14 → 25.
+Right Boundary: Traverse the right edge from the last non-leaf node back up to the root, in reverse:
+22.
+Thus, the boundary traversal in anti-clockwise order is:
+
+20 → 8 → 4 → 10 → 14 → 25 → 22.
+
+==============================================================================================================================
+
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int val) { this.val = val; }
+}
+
+public class solution {
+
+    private static boolean isLeaf(TreeNode node) {
+        return node != null && node.left == null && node.right == null;
+    }
+
+    // Left boundary top-down, excluding root, excluding leaves
+    private static void printLeftBoundary(TreeNode node, StringBuilder sb) {
+        if (node == null || isLeaf(node)) return;
+        sb.append(node.val).append(" ");
+        if (node.left != null) printLeftBoundary(node.left, sb);
+        else printLeftBoundary(node.right, sb);
+    }
+
+    // Right boundary top-down into stack, excluding root, excluding leaves
+    private static void printRightBoundary(TreeNode node, StringBuilder sb) {
+        if (node == null || isLeaf(node)) return;
+        Deque<Integer> stack = new ArrayDeque<>();
+        TreeNode curr = node;
+        while (curr != null && !isLeaf(curr)) {
+            stack.push(curr.val);
+            if (curr.right != null) curr = curr.right;
+            else curr = curr.left;
+        }
+        while (!stack.isEmpty()) sb.append(stack.pop()).append(" ");
+    }
+
+    // Collect all leaves left to right
+    private static void collectLeaves(TreeNode node, StringBuilder sb) {
+        if (node == null) return;
+        if (isLeaf(node)) { sb.append(node.val).append(" "); return; }
+        collectLeaves(node.left, sb);
+        collectLeaves(node.right, sb);
+    }
+
+    public static void boundaryTraversal(TreeNode root) {
+        if (root == null) return;
+        StringBuilder sb = new StringBuilder();
+
+        // 1. Root (always printed, even if leaf)
+        sb.append(root.val).append(" ");
+
+        if (!isLeaf(root)) {
+            // 2. Left boundary (root.left downward, non-leaves only)
+            printLeftBoundary(root.left, sb);
+
+            // 3. All leaves
+            collectLeaves(root, sb);
+
+            // 4. Right boundary (root.right downward, non-leaves only, reversed)
+            printRightBoundary(root.right, sb);
+        }
+
+        System.out.print(sb.toString().trim());
+    }
+
+    public static TreeNode buildTree(Integer[] arr) {
+        if (arr.length == 0 || arr[0] == null) return null;
+        TreeNode root = new TreeNode(arr[0]);
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int i = 1;
+        while (!q.isEmpty() && i < arr.length) {
+            TreeNode curr = q.poll();
+            if (i < arr.length && arr[i] != null) {
+                curr.left = new TreeNode(arr[i]);
+                q.add(curr.left);
+            }
+            i++;
+            if (i < arr.length && arr[i] != null) {
+                curr.right = new TreeNode(arr[i]);
+                q.add(curr.right);
+            }
+            i++;
+        }
+        return root;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        Integer[] arr = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            int val = sc.nextInt();
+            arr[i] = (val == -1) ? null : val;
+        }
+        TreeNode root = buildTree(arr);
+        boundaryTraversal(root);
+        sc.close();
+    }
+}
