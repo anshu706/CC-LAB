@@ -1,4 +1,4 @@
-Binary Tree Traversls
+Binary Tree Traversals
 Problem Statement:
 
 To understand and implement the three fundamental Depth-First Search (DFS) traversals for a binary tree: Pre-order, In-order, and Post-order
