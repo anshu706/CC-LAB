@@ -62,6 +62,7 @@ This tree is not symmetric because the left subtree (2 -> 3) does not mirror the
 
 ==============================================================================================================================
 
+------------- C++ -----------------------
 
 #include <iostream>
 #include <vector>
@@ -136,3 +137,42 @@ int main() {
     return 0;
 }
 
+==========================================================================================================================================
+
+-------------------------- java --------------------------------------
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+public class SymmetricTree {
+
+    static boolean isMirror(TreeNode a, TreeNode b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+
+        return (a.val == b.val) &&
+               isMirror(a.left, b.right) &&
+               isMirror(a.right, b.left);
+    }
+
+    static boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+        return isMirror(root.left, root.right);
+    }
+
+    public static void main(String[] args) {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(2);
+        root.left.left = new TreeNode(3);
+        root.right.right = new TreeNode(3);
+
+        System.out.println(isSymmetric(root));
+    }
+}
