@@ -75,92 +75,109 @@ class TreeNode {
 
 public class solution {
 
-    private static boolean isLeaf(TreeNode node) {
-        return node != null && node.left == null && node.right == null;
+    static boolean isLeaf(TreeNode node) {
+        return node.left == null && node.right == null;
     }
 
-    // Left boundary top-down, excluding root, excluding leaves
-    private static void printLeftBoundary(TreeNode node, StringBuilder sb) {
-        if (node == null || isLeaf(node)) return;
-        sb.append(node.val).append(" ");
-        if (node.left != null) printLeftBoundary(node.left, sb);
-        else printLeftBoundary(node.right, sb);
-    }
+    static void leftBoundary(TreeNode node, StringBuilder sb) {
+        while (node != null) {
+            if (!isLeaf(node))
+                sb.append(node.val).append(" ");
 
-    // Right boundary top-down into stack, excluding root, excluding leaves
-    private static void printRightBoundary(TreeNode node, StringBuilder sb) {
-        if (node == null || isLeaf(node)) return;
-        Deque<Integer> stack = new ArrayDeque<>();
-        TreeNode curr = node;
-        while (curr != null && !isLeaf(curr)) {
-            stack.push(curr.val);
-            if (curr.right != null) curr = curr.right;
-            else curr = curr.left;
+            if (node.left != null)
+                node = node.left;
+            else
+                node = node.right;
         }
-        while (!stack.isEmpty()) sb.append(stack.pop()).append(" ");
     }
 
-    // Collect all leaves left to right
-    private static void collectLeaves(TreeNode node, StringBuilder sb) {
+    static void leaves(TreeNode node, StringBuilder sb) {
         if (node == null) return;
-        if (isLeaf(node)) { sb.append(node.val).append(" "); return; }
-        collectLeaves(node.left, sb);
-        collectLeaves(node.right, sb);
+
+        if (isLeaf(node)) {
+            sb.append(node.val).append(" ");
+            return;
+        }
+
+        leaves(node.left, sb);
+        leaves(node.right, sb);
     }
 
-    public static void boundaryTraversal(TreeNode root) {
-        if (root == null) return;
-        StringBuilder sb = new StringBuilder();
+    static void rightBoundary(TreeNode node, StringBuilder sb) {
+        Stack<Integer> st = new Stack<>();
 
-        // 1. Root (always printed, even if leaf)
+        while (node != null) {
+            if (!isLeaf(node))
+                st.push(node.val);
+
+            if (node.right != null)
+                node = node.right;
+            else
+                node = node.left;
+        }
+
+        while (!st.isEmpty())
+            sb.append(st.pop()).append(" ");
+    }
+
+    static void boundaryTraversal(TreeNode root) {
+        if (root == null) return;
+
+        StringBuilder sb = new StringBuilder();
         sb.append(root.val).append(" ");
 
         if (!isLeaf(root)) {
-            // 2. Left boundary (root.left downward, non-leaves only)
-            printLeftBoundary(root.left, sb);
-
-            // 3. All leaves
-            collectLeaves(root, sb);
-
-            // 4. Right boundary (root.right downward, non-leaves only, reversed)
-            printRightBoundary(root.right, sb);
+            leftBoundary(root.left, sb);
+            leaves(root.left, sb);
+            leaves(root.right, sb);
+            rightBoundary(root.right, sb);
         }
 
         System.out.print(sb.toString().trim());
     }
 
-    public static TreeNode buildTree(Integer[] arr) {
-        if (arr.length == 0 || arr[0] == null) return null;
+    // Build tree from level order (-1 means null)
+    static TreeNode buildTree(int[] arr) {
+        if (arr.length == 0 || arr[0] == -1) return null;
+
         TreeNode root = new TreeNode(arr[0]);
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
+
         int i = 1;
+
         while (!q.isEmpty() && i < arr.length) {
             TreeNode curr = q.poll();
-            if (i < arr.length && arr[i] != null) {
+
+            if (i < arr.length && arr[i] != -1) {
                 curr.left = new TreeNode(arr[i]);
                 q.add(curr.left);
             }
             i++;
-            if (i < arr.length && arr[i] != null) {
+
+            if (i < arr.length && arr[i] != -1) {
                 curr.right = new TreeNode(arr[i]);
                 q.add(curr.right);
             }
             i++;
         }
+
         return root;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+
         int n = sc.nextInt();
-        Integer[] arr = new Integer[n];
-        for (int i = 0; i < n; i++) {
-            int val = sc.nextInt();
-            arr[i] = (val == -1) ? null : val;
-        }
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++)
+            arr[i] = sc.nextInt();
+
         TreeNode root = buildTree(arr);
+
         boundaryTraversal(root);
+
         sc.close();
     }
 }
