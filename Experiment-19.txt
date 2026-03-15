@@ -1,201 +1,47 @@
-Validate a Binary Search Tree
-Problem Statement:
+Objective(s): To solve the classic "Two Sum" problem efficiently using a HashMap.
 
-Objective(s)
-To understand the properties of a Binary Search Tree (BST) and implement a function isValidBST() that checks whether a given binary tree follows BST rules.
+Outcome: Students will understand how a HashMap can be used to optimize a search
+problem from a naive O(n^2) to a linear O(n) time complexity by trading space for time.
 
-Outcome
-Students will be able to:
+Problem Statement: Write a program to implement the "Two Sum" problem using a
+HASHMAP. Given an array of integers nums and an integer target, return indices of the
+two numbers such that they add up to target.
 
-Implement a correct and efficient BST validation algorithm
-Understand the difference between local checks and global range constraints
-Apply recursion while updating min/max allowable ranges
-Avoid common mistakes made in BST validation
-Problem Statement
-Write a program that validates whether a given binary tree is a Binary Search Tree (BST) using the function:
+Background Study: The naive O(n^2) solution uses two nested loops, checking every pair.
 
-Input Explanation:
+A HashMap (which is Java's built-in hash table) allows us to do this in a single pass.
+We iterate through the array once. For each element nums[i], we calculate its "complement" (complement = target - nums[i]). This is the number we need to find.
 
-n
+● We check if this complement already exists as a key in our HashMap.
+● If it does: We found our pair! We return the index of the complement (which we stored as the map's value) and the current index i.
+● If it does not: We add the current number nums[i] (as the key) and its index i (as the value) to the map, so it can be found as a complement by a future element.
 
-v1 v2 v3 ... vn
+====================================================================================================================================================
 
-Output Explanation:
+import java.util.HashMap;
 
-true or false
+public class TwoSum {
+    public static int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
 
-Constraints:
+        for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
 
-Number of nodes: 0 ≤ n ≤ 10⁵
-
-Node values: any integers
-
-Tree input is given in level-order format
-
-Time Limit:
-1 sec
-
-Example 1:
-Input
-7
-5 3 7 2 4 6 8
-
-Output
-true
-
-Example 2:
-Input
-5
-5 1 7 -1 6
-
-Output
-false
-
-Sample I/O Explanation:
-
-
-==============================================================================================================================
-
-import java.util.*;
-
-class TreeNode {
-    int val;
-    TreeNode left, right;
-
-    TreeNode(int val) {
-        this.val = val;
-        this.left = null;
-        this.right = null;
-    }
-}
-
-public class ValidateBST {
-
-    public static boolean isValidBST(TreeNode root) {
-        return check(root, Long.MIN_VALUE, Long.MAX_VALUE);
-    }
-
-    private static boolean check(TreeNode node, long min, long max) {
-        if (node == null) return true;
-
-        if (node.val <= min || node.val >= max) return false;
-
-        return check(node.left, min, node.val) &&
-               check(node.right, node.val, max);
-    }
-
-    public static TreeNode buildTree(Integer[] arr) {
-        if (arr.length == 0 || arr[0] == null) return null;
-
-        TreeNode root = new TreeNode(arr[0]);
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
-
-        int i = 1;
-
-        while (!q.isEmpty() && i < arr.length) {
-            TreeNode curr = q.poll();
-
-            if (arr[i] != null) {
-                curr.left = new TreeNode(arr[i]);
-                q.add(curr.left);
+            if (map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
             }
-            i++;
 
-            if (i < arr.length && arr[i] != null) {
-                curr.right = new TreeNode(arr[i]);
-                q.add(curr.right);
-            }
-            i++;
+            map.put(nums[i], i);
         }
 
-        return root;
+        return new int[]{-1, -1}; // if no pair found
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        int[] nums = {2, 7, 11, 15};
+        int target = 9;
 
-        int n = sc.nextInt();
-        Integer[] arr = new Integer[n];
-
-        for (int i = 0; i < n; i++) {
-            int val = sc.nextInt();
-            arr[i] = (val == -1) ? null : val;
-        }
-
-        TreeNode root = buildTree(arr);
-
-        System.out.println(isValidBST(root));
-    }
-}import java.util.*;
-
-class TreeNode {
-    int val;
-    TreeNode left, right;
-
-    TreeNode(int val) {
-        this.val = val;
-        this.left = null;
-        this.right = null;
-    }
-}
-
-public class ValidateBST {
-
-    public static boolean isValidBST(TreeNode root) {
-        return check(root, Long.MIN_VALUE, Long.MAX_VALUE);
-    }
-
-    private static boolean check(TreeNode node, long min, long max) {
-        if (node == null) return true;
-
-        if (node.val <= min || node.val >= max) return false;
-
-        return check(node.left, min, node.val) &&
-               check(node.right, node.val, max);
-    }
-
-    public static TreeNode buildTree(Integer[] arr) {
-        if (arr.length == 0 || arr[0] == null) return null;
-
-        TreeNode root = new TreeNode(arr[0]);
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
-
-        int i = 1;
-
-        while (!q.isEmpty() && i < arr.length) {
-            TreeNode curr = q.poll();
-
-            if (arr[i] != null) {
-                curr.left = new TreeNode(arr[i]);
-                q.add(curr.left);
-            }
-            i++;
-
-            if (i < arr.length && arr[i] != null) {
-                curr.right = new TreeNode(arr[i]);
-                q.add(curr.right);
-            }
-            i++;
-        }
-
-        return root;
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        int n = sc.nextInt();
-        Integer[] arr = new Integer[n];
-
-        for (int i = 0; i < n; i++) {
-            int val = sc.nextInt();
-            arr[i] = (val == -1) ? null : val;
-        }
-
-        TreeNode root = buildTree(arr);
-
-        System.out.println(isValidBST(root));
+        int[] result = twoSum(nums, target);
+        System.out.println("Indices: " + result[0] + ", " + result[1]);
     }
 }
